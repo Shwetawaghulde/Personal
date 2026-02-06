@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Letters 💌</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#ffd6e7,#fff0f6);
+  overflow-x:hidden;
+  text-align:center;
+}
+
+/* TITLE */
+h1{
+  font-family:'Great Vibes',cursive;
+  color:#ff4f8b;
+  font-size:42px;
+}
+
+/* GRID */
+.container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:30px;
+  max-width:900px;
+  margin:auto;
+  padding:30px;
+}
+
+/* CARD */
+.card{
+  cursor:pointer;
+  transition:0.4s;
+}
+
+.card:hover{
+  transform:scale(1.08);
+}
+
+/* ENVELOPE */
+.envelope{
+  width:140px;
+  height:90px;
+  background:white;
+  margin:auto;
+  border-radius:6px;
+  position:relative;
+  box-shadow:0 10px 20px rgba(0,0,0,0.1);
+  overflow:hidden;
+}
+
+.flap{
+  position:absolute;
+  width:0;
+  height:0;
+  border-left:70px solid transparent;
+  border-right:70px solid transparent;
+  border-top:45px solid #ff9dbb;
+  top:0;
+  left:0;
+  transition:0.5s;
+  transform-origin:top;
+}
+
+.card:hover .flap{
+  transform:rotateX(180deg);
+}
+
+.day{color:#ff4f8b;font-weight:500;margin-top:10px;}
+.date{font-size:13px;color:#777;}
+
+/* MODAL LETTER */
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  justify-content:center;
+  align-items:center;
+}
+
+.letter{
+  background:#fffafc;
+  padding:30px;
+  border-radius:15px;
+  width:330px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.2);
+  animation:slideUp 0.5s ease;
+}
+
+@keyframes slideUp{
+  from{transform:translateY(100px);opacity:0;}
+  to{transform:translateY(0);opacity:1;}
+}
+
+.letter h2{
+  font-family:'Great Vibes',cursive;
+  color:#ff4f8b;
+  font-size:28px;
+}
+
+button{
+  background:#ff7aa8;
+  border:none;
+  color:white;
+  padding:8px 16px;
+  border-radius:20px;
+  cursor:pointer;
+}
+
+/* FLOATING BACKGROUND HEARTS */
+.bg-heart{
+  position:fixed;
+  animation:float 5s linear infinite;
+  opacity:0.7;
+  font-size:26px;
+}
+
+@keyframes float{
+  0%{transform:translateY(100vh);}
+  100%{transform:translateY(-100px);}
+}
+
+/* HEART EXPLOSION */
+.heart{
+  position:fixed;
+  animation:fall 1s linear forwards;
+}
+
+@keyframes fall{
+  0%{transform:translateY(-50px);}
+  100%{transform:translateY(100vh);opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<h1>💌 My Valentine Letters 💌</h1>
+
+<audio autoplay loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_8d28d4a5fa.mp3" type="audio/mpeg">
+</audio>
+
+<div class="container" id="container"></div>
+
+<div class="modal" id="modal">
+  <div class="letter">
+    <h2 id="title"></h2>
+    <p id="text"></p>
+    <br>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+/* DAYS */
+const days = [
+  ["Rose Day","6 Feb"],
+  ["Propose Day","7 Feb"],
+  ["Chocolate Day","8 Feb"],
+  ["Teddy Day","9 Feb"],
+  ["Promise Day","10 Feb"],
+  ["Hug Day","11 Feb"],
+  ["Kiss Day","12 Feb"],
+  ["Valentine Day","14 Feb"]
+];
+
+/* PICKUP LINES */
+const pickupLines = {
+  "Rose Day":"Roses are red, but they’ve got nothing on you—because you just made my whole day bloom.",
+  "Propose Day":"I don’t need a special ring or a big speech… just you saying ‘yes’ would be perfect.",
+  "Chocolate Day":"Are you chocolate? Because one bite of your smile and I’m instantly addicted.",
+  "Teddy Day":"If I were a teddy bear, I’d choose you as my forever cuddle spot.",
+  "Promise Day":"I promise to annoy you, support you, and care for you—every single day.",
+  "Hug Day":"Can I hug you? I just need to check if you’re as warm as you feel in my heart.",
+  "Kiss Day":"Is it Kiss Day, or did your smile just make me forget the calendar?",
+  "Valentine Day":"You don’t need to be my Valentine for a day… I’d rather choose you every day."
+};
+
+const container = document.getElementById("container");
+
+/* CREATE CARDS */
+days.forEach((d,index)=>{
+  let card = document.createElement("div");
+  card.className = "card";
+
+  card.innerHTML = `
+    <div class="envelope"><div class="flap"></div></div>
+    <div class="day">${d[0]}</div>
+    <div class="date">${d[1]}</div>
+  `;
+
+  card.onclick = () => openLetter(d[0], index === 7);
+  container.appendChild(card);
+});
+
+/* TYPING EFFECT */
+function typeText(text){
+  let el = document.getElementById("text");
+  el.innerHTML = "";
+  let i = 0;
+
+  function typing(){
+    if(i < text.length){
+      el.innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typing, 30);
+    }
+  }
+  typing();
+}
+
+/* OPEN LETTER */
+function openLetter(day, isValentine){
+  document.getElementById("title").innerText = day;
+  typeText(pickupLines[day]);
+  document.getElementById("modal").style.display = "flex";
+
+  if(isValentine){
+    heartExplosion();
+    setTimeout(()=>alert("❤️ Happy Valentine Day ❤️"),500);
+  }
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
+}
+
+/* HEART EXPLOSION */
+function heartExplosion(){
+  for(let i=0;i<60;i++){
+    let heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤️";
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.fontSize = (Math.random()*20 + 20) + "px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+  }
+}
+
+/* FLOATING HEARTS */
+setInterval(()=>{
+  let h = document.createElement("div");
+  h.className = "bg-heart";
+  h.innerHTML = "💗";
+  h.style.left = Math.random()*100 + "vw";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),10000);
+},900);
+</script>
+
+</body>
+</html>
